@@ -11,6 +11,7 @@ import { Header } from './bracket/Header';
 
 export function App() {
   const [paper, setPaper] = useState<PaperColor>('#F1EDE2');
+  const [showCredits, setShowCredits] = useState(false);
   const theme = makeTheme(paper);
   const { state, isSample, loading, error, roundsPlayed, setRoundsPlayed } =
     useLiveBracket();
@@ -189,6 +190,93 @@ export function App() {
           )}
         </div>
       </div>
+
+      {/* Info button — fixed bottom-left */}
+      <button
+        type="button"
+        onClick={() => setShowCredits(c => !c)}
+        aria-label="Credits"
+        style={{
+          position: 'fixed',
+          bottom: 16,
+          left: 16,
+          width: 36,
+          height: 36,
+          borderRadius: '50%',
+          border: `1px solid ${theme.ringColor}`,
+          background: theme.dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+          color: theme.ink,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 16,
+          opacity: 0.7,
+          zIndex: 100,
+          transition: 'opacity 0.2s',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+        onMouseLeave={e => (e.currentTarget.style.opacity = '0.7')}
+      >
+        ⓘ
+      </button>
+
+      {/* Credits popup */}
+      {showCredits && (
+        <>
+          <div
+            onClick={() => setShowCredits(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 101,
+            }}
+          />
+          <div
+            style={{
+              position: 'fixed',
+              bottom: 60,
+              left: 16,
+              zIndex: 102,
+              background: theme.dark ? '#1E1C17' : '#FFFFFF',
+              border: `1px solid ${theme.ringColor}`,
+              borderRadius: 12,
+              padding: '16px 20px',
+              boxShadow: theme.dark
+                ? '0 8px 32px rgba(0,0,0,0.6)'
+                : '0 8px 32px rgba(0,0,0,0.14)',
+              minWidth: 260,
+              color: theme.ink,
+              fontFamily: 'var(--font-sans)',
+            }}
+          >
+            <p style={{ margin: '0 0 12px', fontWeight: 700, fontSize: 15 }}>Credits</p>
+            <table style={{ borderSpacing: '8px 6px', margin: -8 }}>
+              <tbody>
+                {[
+                  ['Original graphic', 'Emilio Sansolini', 'https://www.behance.net/emiliosansolini'],
+                  ['Human author', 'OrMosco', 'https://github.com/OrMosco'],
+                  ['Source code', 'OrMosco/mondial2026', 'https://github.com/OrMosco/mondial2026'],
+                ].map(([label, text, href]) => (
+                  <tr key={label}>
+                    <td style={{ fontSize: 13, opacity: 0.55, whiteSpace: 'nowrap', verticalAlign: 'top' }}>{label}</td>
+                    <td style={{ fontSize: 13 }}>
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: theme.ink, textDecoration: 'underline', textUnderlineOffset: 2 }}
+                      >
+                        {text}
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
   );
 }

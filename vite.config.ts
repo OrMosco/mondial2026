@@ -7,7 +7,7 @@ import react from '@vitejs/plugin-react';
 // `base` is root ("/") for Vercel, but GitHub Pages serves the app from a
 // project subpath ("/mondial2026/"). The Pages workflow sets GITHUB_PAGES=true
 // so that build gets the right base while Vercel keeps serving from root.
-export default defineConfig({
-  base: process.env.GITHUB_PAGES ? '/mondial2026/' : '/',
+export default defineConfig(({ mode }) => ({
+  base: mode === 'github-pages' ? '/mondial2026/' : '/',
   plugins: [react()],
-});
+}));
