@@ -61,7 +61,7 @@ export function RadialBracket({
 
       {/* real FIFA World Cup trophy photo */}
       <image
-        href="/trophy.png"
+        href={`${import.meta.env.BASE_URL}trophy.png`}
         x={490 - 112.5 / 2}
         y={490 - 118 / 2}
         width={112.5}
