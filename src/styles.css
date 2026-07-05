@@ -13,15 +13,42 @@ html,
 body,
 #root {
   min-height: 100vh;
+  width: 100%;
 }
 
 body {
   font-family: var(--font-sans);
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
 }
 
 button {
   font-family: inherit;
+}
+
+/* Slow pulse for the "Live" status badge. */
+@keyframes liveBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.live-badge {
+  animation: liveBlink 2.2s ease-in-out infinite;
+}
+
+/* Subtle blink for the team icons of the match(es) coming up next. */
+@keyframes nextBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }

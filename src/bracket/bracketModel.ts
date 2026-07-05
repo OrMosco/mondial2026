@@ -127,6 +127,26 @@ export function lostTeamIds(state: BracketState): Set<string> {
   return lost;
 }
 
+/**
+ * Keys "L:index" of the matches that are up next — the earliest round that still
+ * has a ready (both teams known) but undecided match. This is the current
+ * frontier of play: once every match in a round is decided, the frontier moves
+ * inward. Returns an empty set before any result exists (pre-tournament) and
+ * once the Final is decided, so nothing blinks at those times.
+ */
+export function nextMatchKeys(state: BracketState): Set<string> {
+  const keys = new Set<string>();
+  if (state.currentRound < 1) return keys;
+  for (let L = 1; L <= 5; L++) {
+    const ready = state.matches[L].filter((m) => m.teamA && m.teamB && !m.winner);
+    if (ready.length) {
+      for (const m of ready) keys.add(`${L}:${m.index}`);
+      break; // only highlight the frontier round
+    }
+  }
+  return keys;
+}
+
 /** Set of leaf indices whose team has been eliminated (lost any round). */
 export function eliminatedLeaves(state: BracketState): Set<number> {
   const out = new Set<number>();

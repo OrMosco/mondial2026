@@ -12,12 +12,14 @@ interface Props {
   /** diameter as viewBox percentage */
   sizePct: number;
   dim?: boolean;
+  /** Slow pulse to flag this team's match as coming up next. */
+  blink?: boolean;
   style?: CSSProperties;
   title?: string;
 }
 
 /** A circular flag/crest chip positioned absolutely over the SVG. */
-export function Flag({ team, theme, leftPct, topPct, sizePct, dim, style, title }: Props) {
+export function Flag({ team, theme, leftPct, topPct, sizePct, dim, blink, style, title }: Props) {
   const src = team?.logo ?? (team?.code ? flagUrl(team.code) : undefined);
   const base: CSSProperties = {
     position: 'absolute',
@@ -32,6 +34,13 @@ export function Flag({ team, theme, leftPct, topPct, sizePct, dim, style, title 
     objectFit: 'cover',
     transition: 'opacity 0.4s ease, filter 0.4s ease',
     ...(dim ? { opacity: 0.5, filter: 'grayscale(1)' } : null),
+    ...(blink && !dim
+      ? {
+          animation: 'nextBlink 1.5s ease-in-out infinite',
+          boxShadow: `0 0 0 2px ${theme.gold}`,
+          zIndex: 2,
+        }
+      : null),
     ...style,
   };
 

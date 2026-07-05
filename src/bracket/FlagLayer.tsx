@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { Theme } from '../theme';
-import { BracketState, eliminatedLeaves } from './bracketModel';
+import { BracketState, eliminatedLeaves, nextMatchKeys } from './bracketModel';
 import { FLAG_R, R, leafAngles, pctSize, pctX, pctY, pt } from './geometry';
 import { Flag } from './Flag';
 
 /** The 32 outer flags. Eliminated teams are dimmed + desaturated. */
 export function FlagLayer({ state, theme }: { state: BracketState; theme: Theme }) {
   const out = useMemo(() => eliminatedLeaves(state), [state]);
+  const next = useMemo(() => nextMatchKeys(state), [state]);
   const angles = useMemo(() => leafAngles(), []);
   const size = pctSize(FLAG_R);
 
@@ -14,6 +15,7 @@ export function FlagLayer({ state, theme }: { state: BracketState; theme: Theme 
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       {state.leaves.map((team, i) => {
         const p = pt(angles[i], R[0]);
+        // A leaf's next game is its Round-of-32 match (index = floor(i / 2)).
         return (
           <Flag
             key={i}
@@ -23,6 +25,7 @@ export function FlagLayer({ state, theme }: { state: BracketState; theme: Theme 
             topPct={pctY(p.y)}
             sizePct={size}
             dim={out.has(i)}
+            blink={next.has(`1:${Math.floor(i / 2)}`)}
           />
         );
       })}

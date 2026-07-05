@@ -22,6 +22,8 @@ export function App() {
         ? 'Champion crowned'
         : `Through ${ROUND_LABELS[roundsPlayed]}`;
 
+  const live = !loading && !isSample;
+
   return (
     <div
       style={{
@@ -31,8 +33,8 @@ export function App() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 16,
-        padding: '24px 16px',
+        gap: 'clamp(12px, 3vw, 16px)',
+        padding: 'clamp(12px, 3vw, 24px) clamp(8px, 3vw, 16px)',
         transition: 'background 0.4s ease',
       }}
     >
@@ -49,7 +51,11 @@ export function App() {
         }}
       >
         <span
+          className={live ? 'live-badge' : undefined}
           style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
             padding: '3px 10px',
             borderRadius: 999,
             fontWeight: 700,
@@ -61,21 +67,60 @@ export function App() {
             boxShadow: `0 0 0 1px ${theme.ringColor}`,
           }}
         >
+          {live && (
+            <span
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: '50%',
+                background: 'currentColor',
+                display: 'inline-block',
+              }}
+            />
+          )}
           {loading ? 'Loading…' : isSample ? 'Sample data' : 'Live'}
         </span>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          Theme
-          <select
-            value={paper}
-            onChange={(e) => setPaper(e.target.value as PaperColor)}
-            style={{ font: 'inherit' }}
+        <button
+          type="button"
+          onClick={() => setPaper(theme.dark ? '#F1EDE2' : '#16140F')}
+          aria-label={theme.dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={theme.dark ? 'Light mode' : 'Dark mode'}
+          style={{
+            position: 'relative',
+            width: 54,
+            height: 28,
+            borderRadius: 999,
+            border: `1px solid ${theme.ringColor}`,
+            background: theme.dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.06)',
+            cursor: 'pointer',
+            padding: 0,
+            flexShrink: 0,
+            transition: 'background 0.3s ease',
+          }}
+        >
+          <span
+            style={{
+              position: 'absolute',
+              top: 2,
+              left: theme.dark ? 28 : 2,
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              background: theme.dark ? '#0F0D09' : '#FFFFFF',
+              color: theme.gold,
+              boxShadow: '0 1px 3px rgba(0,0,0,0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 13,
+              lineHeight: 1,
+              transition: 'left 0.3s ease, background 0.3s ease',
+            }}
           >
-            <option value="#F1EDE2">Cream</option>
-            <option value="#FFFFFF">White</option>
-            <option value="#16140F">Dark</option>
-          </select>
-        </label>
+            {theme.dark ? '☾' : '☀'}
+          </span>
+        </button>
 
         {isSample && (
           <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -104,26 +149,32 @@ export function App() {
       {/* Poster */}
       <div
         style={{
-          width: 1000,
-          maxWidth: '100%',
-          aspectRatio: '1000 / 1240',
+          width: '100%',
+          maxWidth: 1000,
           background: theme.paper,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '60px 56px 48px',
+          justifyContent: 'center',
+          gap: 'clamp(16px, 4vw, 40px)',
+          padding: 'clamp(24px, 5vw, 60px) clamp(12px, 4vw, 56px)',
           boxSizing: 'border-box',
           overflow: 'hidden',
           boxShadow: theme.dark
             ? '0 10px 40px rgba(0,0,0,0.5)'
             : '0 10px 40px rgba(0,0,0,0.10)',
-          borderRadius: 8,
+          borderRadius: 'clamp(10px, 3vw, 16px)',
         }}
       >
         <Header state={state} theme={theme} />
 
-        <div style={{ position: 'relative', width: '88%', aspectRatio: '1 / 1' }}>
+        <div
+          style={{
+            position: 'relative',
+            width: 'min(94%, 900px)',
+            aspectRatio: '1 / 1',
+          }}
+        >
           <RadialBracket theme={theme} />
           {state && (
             <>
