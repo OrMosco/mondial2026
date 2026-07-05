@@ -16,8 +16,10 @@ function hasScore(m: Match): boolean {
 export function ScoreLayer({ state, theme }: { state: BracketState; theme: Theme }) {
   const levels = useMemo(() => buildLevels(), []);
 
+  // Sizes are in container-query units (cqi = % of the bracket's width) so the
+  // pills stay proportional to the bracket at any size, capped for large screens.
   const numStyle = (win: boolean) => ({
-    fontSize: '12px',
+    fontSize: 'min(14px, 2.1cqi)',
     fontWeight: win ? 800 : 600,
     color: theme.ink,
     opacity: win ? 1 : 0.42,
@@ -51,8 +53,8 @@ export function ScoreLayer({ state, theme }: { state: BracketState; theme: Theme
                 transform: 'translate(-50%, -50%)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px',
-                padding: '4px 9px',
+                gap: 'min(4px, 0.6cqi)',
+                padding: 'min(4px, 0.6cqi) min(9px, 1.4cqi)',
                 borderRadius: '999px',
                 background: theme.paper,
                 boxShadow: `0 0 0 1px ${theme.ringColor}`,
@@ -60,7 +62,7 @@ export function ScoreLayer({ state, theme }: { state: BracketState; theme: Theme
               }}
             >
               <span style={numStyle(aWon)}>{m.scoreA}</span>
-              <span style={{ fontSize: '9px', opacity: 0.4, color: theme.ink }}>–</span>
+              <span style={{ fontSize: 'min(10px, 1.5cqi)', opacity: 0.4, color: theme.ink }}>–</span>
               <span style={numStyle(!aWon)}>{m.scoreB}</span>
             </div>
           );

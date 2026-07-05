@@ -33,8 +33,9 @@ export function App() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: 'clamp(12px, 3vw, 16px)',
-        padding: 'clamp(12px, 3vw, 24px) clamp(8px, 3vw, 16px)',
+        padding: 'clamp(10px, 3vw, 24px) clamp(6px, 2vw, 16px)',
         transition: 'background 0.4s ease',
       }}
     >
@@ -156,8 +157,8 @@ export function App() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 'clamp(16px, 4vw, 40px)',
-          padding: 'clamp(24px, 5vw, 60px) clamp(12px, 4vw, 56px)',
+          gap: 'clamp(14px, 3vw, 40px)',
+          padding: 'clamp(18px, 4vw, 60px) clamp(8px, 2.5vw, 56px)',
           boxSizing: 'border-box',
           overflow: 'hidden',
           boxShadow: theme.dark
@@ -171,8 +172,10 @@ export function App() {
         <div
           style={{
             position: 'relative',
-            width: 'min(94%, 900px)',
+            width: 'min(100%, 900px)',
             aspectRatio: '1 / 1',
+            // Anchor container-query units so the score pills scale with the bracket.
+            containerType: 'inline-size',
           }}
         >
           <RadialBracket theme={theme} />
@@ -185,8 +188,6 @@ export function App() {
             </>
           )}
         </div>
-
-        <div style={{ fontSize: 18, color: theme.ink, opacity: 0.7, lineHeight: 1 }}>✦</div>
       </div>
     </div>
   );
