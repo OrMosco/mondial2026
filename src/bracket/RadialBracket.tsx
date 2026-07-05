@@ -57,23 +57,17 @@ export function RadialBracket({
       )}
 
       {/* clear the center for the trophy */}
-      <circle cx="490" cy="490" r="58" fill={theme.paper} stroke="none" />
+      <circle cx="490" cy="490" r="60" fill={theme.paper} stroke="none" />
 
-      <g
-        transform="translate(490,490)"
-        stroke={theme.ink}
-        strokeWidth={1.6}
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      >
-        <path d="M-30,-46 L30,-46 C29,-20 19,-2 9,2 L-9,2 C-19,-2 -29,-20 -30,-46 Z" fill={theme.gold} />
-        <path d="M-30,-44 C-49,-42 -49,-13 -31,-11" fill="none" />
-        <path d="M30,-44 C49,-42 49,-13 31,-11" fill="none" />
-        <path d="M-7,2 L7,2 L5,18 L-5,18 Z" fill={theme.gold} />
-        <path d="M-16,18 L16,18 L20,30 L-20,30 Z" fill={theme.gold} />
-        <path d="M-25,30 L25,30 L25,41 L-25,41 Z" fill={theme.gold} />
-        <line x1="-19" y1="-38" x2="19" y2="-38" stroke={theme.ink} strokeWidth={1} opacity={0.5} />
-      </g>
+      {/* real FIFA World Cup trophy photo */}
+      <image
+        href="/trophy.png"
+        x={490 - 112.5 / 2}
+        y={490 - 118 / 2}
+        width={112.5}
+        height={118}
+        preserveAspectRatio="xMidYMid meet"
+      />
     </svg>
   );
 }
