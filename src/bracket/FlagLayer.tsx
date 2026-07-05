@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { Theme } from '../theme';
-import { BracketState, eliminatedLeaves, nextMatchKeys } from './bracketModel';
+import { BracketState, eliminatedLeaves, nextMatchKey } from './bracketModel';
 import { FLAG_R, R, leafAngles, pctSize, pctX, pctY, pt } from './geometry';
 import { Flag } from './Flag';
 
 /** The 32 outer flags. Eliminated teams are dimmed + desaturated. */
 export function FlagLayer({ state, theme }: { state: BracketState; theme: Theme }) {
   const out = useMemo(() => eliminatedLeaves(state), [state]);
-  const next = useMemo(() => nextMatchKeys(state), [state]);
+  const nextKey = useMemo(() => nextMatchKey(state), [state]);
   const angles = useMemo(() => leafAngles(), []);
   const size = pctSize(FLAG_R);
 
@@ -25,7 +25,7 @@ export function FlagLayer({ state, theme }: { state: BracketState; theme: Theme 
             topPct={pctY(p.y)}
             sizePct={size}
             dim={out.has(i)}
-            blink={next.has(`1:${Math.floor(i / 2)}`)}
+            blink={nextKey === `1:${Math.floor(i / 2)}`}
           />
         );
       })}

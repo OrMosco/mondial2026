@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Theme } from '../theme';
-import { BracketState, lostTeamIds, nextMatchKeys } from './bracketModel';
+import { BracketState, lostTeamIds, nextMatchKey } from './bracketModel';
 import { FLAG_R, R, buildLevels, nodeAngles, pctSize, pctX, pctY, pt } from './geometry';
 import { Flag } from './Flag';
 
@@ -13,7 +13,7 @@ export function WinnersLayer({ state, theme }: { state: BracketState; theme: The
   // Teams that advanced here but lost a later round get the off-white / grayscale
   // treatment too, matching how losing flags look at every step.
   const lost = useMemo(() => lostTeamIds(state), [state]);
-  const next = useMemo(() => nextMatchKeys(state), [state]);
+  const nextKey = useMemo(() => nextMatchKey(state), [state]);
 
   return (
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -34,7 +34,7 @@ export function WinnersLayer({ state, theme }: { state: BracketState; theme: The
               topPct={pctY(p.y)}
               sizePct={size}
               dim={team ? lost.has(team.id) : false}
-              blink={next.has(`${L + 1}:${Math.floor(i / 2)}`)}
+              blink={nextKey === `${L + 1}:${Math.floor(i / 2)}`}
             />
           );
         });

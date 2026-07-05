@@ -19,6 +19,9 @@ interface ApiGame {
   away_team_id: string;
   home_score: string;
   away_score: string;
+  home_penalty_score?: string;
+  away_penalty_score?: string;
+  local_date?: string; // "MM/DD/YYYY HH:mm"
   home_team_label?: string;
   away_team_label?: string;
   home_team_name_en?: string;
@@ -71,11 +74,20 @@ function teamFromGame(
   return undefined;
 }
 
-function parseScore(v: string): number | undefined {
+function parseScore(v?: string): number | undefined {
   // Unlike team ids, a score of "0" is a real value — only null/empty is missing.
   if (v == null || v === '' || v.toLowerCase() === 'null') return undefined;
   const n = Number(v);
   return Number.isFinite(n) ? n : undefined;
+}
+
+/** Parse "MM/DD/YYYY HH:mm" (the API's local_date) into epoch ms. */
+function parseKickoff(v?: string): number | undefined {
+  const m = v?.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+  if (!m) return undefined;
+  const [, mm, dd, yyyy, hh, min] = m;
+  const t = new Date(+yyyy, +mm - 1, +dd, +hh, +min).getTime();
+  return Number.isFinite(t) ? t : undefined;
 }
 
 function statusOf(g: ApiGame): 'scheduled' | 'live' | 'finished' {
@@ -133,6 +145,7 @@ function buildBracket(games: ApiGame[], teams: Map<string, ApiTeam>): BracketSta
     if (!s) continue;
     const m = matches[s.level][s.index];
     m.status = statusOf(g);
+    m.kickoff = parseKickoff(g.local_date);
     const tA = teamFromGame(teams, g.home_team_id, g.home_team_name_en);
     const tB = teamFromGame(teams, g.away_team_id, g.away_team_name_en);
     if (tA) m.teamA = tA;
@@ -140,6 +153,9 @@ function buildBracket(games: ApiGame[], teams: Map<string, ApiTeam>): BracketSta
     if (m.status !== 'scheduled') {
       m.scoreA = parseScore(g.home_score);
       m.scoreB = parseScore(g.away_score);
+      // Penalty scores decide a finished knockout tie.
+      m.penA = parseScore(g.home_penalty_score);
+      m.penB = parseScore(g.away_penalty_score);
     }
     if (s.level === 1) {
       leaves[s.index * 2] = tA;

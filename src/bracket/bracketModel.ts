@@ -21,8 +21,13 @@ export interface Match {
   teamB?: Team;
   scoreA?: number;
   scoreB?: number;
+  /** Penalty shootout scores, present only when a knockout tie went to penalties. */
+  penA?: number;
+  penB?: number;
+  /** Kickoff time (epoch ms), used to pick the single next game to highlight. */
+  kickoff?: number;
   status: MatchStatus;
-  /** 'A' | 'B' once decided (includes penalties resolved upstream). */
+  /** 'A' | 'B' once decided (regular time or penalties). */
   winner?: 'A' | 'B';
 }
 
@@ -48,10 +53,14 @@ export const ROUND_LABELS: Record<number, string> = {
 export const ROUND_SIZES = [0, 16, 8, 4, 2, 1] as const;
 
 function decide(m: Match): 'A' | 'B' | undefined {
-  if (m.scoreA == null || m.scoreB == null) return undefined;
   if (m.status !== 'finished') return undefined;
-  if (m.scoreA === m.scoreB) return undefined; // ties resolved by provider via penalties
-  return m.scoreA > m.scoreB ? 'A' : 'B';
+  if (m.scoreA == null || m.scoreB == null) return undefined;
+  if (m.scoreA !== m.scoreB) return m.scoreA > m.scoreB ? 'A' : 'B';
+  // A finished knockout tie is settled on penalties.
+  if (m.penA != null && m.penB != null && m.penA !== m.penB) {
+    return m.penA > m.penB ? 'A' : 'B';
+  }
+  return undefined;
 }
 
 function winnerTeam(m: Match): Team | undefined {
@@ -128,23 +137,26 @@ export function lostTeamIds(state: BracketState): Set<string> {
 }
 
 /**
- * Keys "L:index" of the matches that are up next — the earliest round that still
- * has a ready (both teams known) but undecided match. This is the current
- * frontier of play: once every match in a round is decided, the frontier moves
- * inward. Returns an empty set before any result exists (pre-tournament) and
- * once the Final is decided, so nothing blinks at those times.
+ * Key "L:index" of the single game coming up next: the ready (both teams known)
+ * match that has not finished yet with the earliest kickoff. A live game — whose
+ * kickoff is already in the past — naturally sorts first, so "next" becomes "now"
+ * while it's being played. Returns null when nothing is pending (no fixtures
+ * seeded yet, or the Final is already decided).
  */
-export function nextMatchKeys(state: BracketState): Set<string> {
-  const keys = new Set<string>();
-  if (state.currentRound < 1) return keys;
+export function nextMatchKey(state: BracketState): string | null {
+  let bestKey: string | null = null;
+  let bestT = Number.POSITIVE_INFINITY;
   for (let L = 1; L <= 5; L++) {
-    const ready = state.matches[L].filter((m) => m.teamA && m.teamB && !m.winner);
-    if (ready.length) {
-      for (const m of ready) keys.add(`${L}:${m.index}`);
-      break; // only highlight the frontier round
+    for (const m of state.matches[L]) {
+      if (!m.teamA || !m.teamB || m.status === 'finished') continue;
+      const t = m.kickoff ?? Number.MAX_SAFE_INTEGER;
+      if (t < bestT) {
+        bestT = t;
+        bestKey = `${L}:${m.index}`;
+      }
     }
   }
-  return keys;
+  return bestKey;
 }
 
 /** Set of leaf indices whose team has been eliminated (lost any round). */
