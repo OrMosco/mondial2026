@@ -153,19 +153,12 @@ export function App() {
         style={{
           width: '100%',
           maxWidth: 1000,
-          background: theme.paper,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 'clamp(14px, 3vw, 40px)',
-          padding: 'clamp(18px, 4vw, 60px) clamp(8px, 2.5vw, 56px)',
           boxSizing: 'border-box',
-          overflow: 'hidden',
-          boxShadow: theme.dark
-            ? '0 10px 40px rgba(0,0,0,0.5)'
-            : '0 10px 40px rgba(0,0,0,0.10)',
-          borderRadius: 'clamp(10px, 3vw, 16px)',
         }}
       >
         <Header state={state} theme={theme} />
